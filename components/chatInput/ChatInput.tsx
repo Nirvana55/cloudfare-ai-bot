@@ -12,8 +12,11 @@ import {
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
-import { Dispatch, SetStateAction } from "react";
+import {
+  useSendMessageChatWithId,
+  useSendNewMessageChat,
+} from "@/api/chat/mutation";
+import useGetUserData from "@/lib/hooks";
 
 const schema = z.object({
   question: z.string(),
@@ -22,20 +25,12 @@ const schema = z.object({
 type QuestionSchema = z.infer<typeof schema>;
 
 type ChatInputProps = {
-  handleSubmit?: () => void;
-  setChatHistory: Dispatch<
-    SetStateAction<
-      Partial<{
-        msg: string;
-        reply: string;
-      }>[]
-    >
-  >;
+  id?: string;
 };
 
 const ChatInput = (props: ChatInputProps) => {
-  const { setChatHistory } = props;
-
+  const { id } = props;
+  const user = useGetUserData();
   const form = useForm<QuestionSchema>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -43,21 +38,29 @@ const ChatInput = (props: ChatInputProps) => {
     },
   });
 
+  const sendMessageChat = useSendNewMessageChat(() => {
+    form.setValue("question", "");
+    form.reset({ question: "" });
+  });
+
+  const sendMessageChatWithId = useSendMessageChatWithId(() => {
+    form.setValue("question", "");
+    form.reset({ question: "" });
+  }, Number(id));
+
   const onSubmit = async (values: QuestionSchema) => {
-    try {
-      const response = await axios.post("/api/chat", {
-        question: values.question,
+    const payloadData = {
+      userInput: values.question,
+      user_id: user?.id as string,
+    };
+    if (id) {
+      return sendMessageChatWithId.mutate({
+        ...payloadData,
+        isInitialChat: false,
+        message_chat_id: Number(id),
       });
-      setChatHistory((prev) => [
-        ...prev,
-        {
-          msg: values.question,
-          reply: response.data.result.response,
-        },
-      ]);
-    } catch (error) {
-      console.log("first");
     }
+    return sendMessageChat.mutate({ ...payloadData, isInitialChat: true });
   };
 
   return (

@@ -3,13 +3,8 @@
 import ChatInput from "@/components/chatInput/ChatInput";
 import NavbarMenu from "@/components/navbar/NavbarMenu";
 import Sidebar from "@/components/sidebar/Sidebar";
-import { useState } from "react";
-
-type ChatItem = Partial<{ msg: string; reply: string }>;
 
 const Dashboard = () => {
-  const [chatHistory, setChatHistory] = useState<ChatItem[]>([{ msg: "1" }]);
-
   return (
     <div className='grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]'>
       <Sidebar />
@@ -32,7 +27,7 @@ const Dashboard = () => {
         </div>
 
         <div className='mb-1 sm:mb-0 lg:px-14 lg:mx-auto lg:max-w-screen-lg'>
-          <ChatInput setChatHistory={setChatHistory} />
+          <ChatInput />
         </div>
       </div>
     </div>
