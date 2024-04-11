@@ -51,8 +51,8 @@ const ChatInput = (props: ChatInputProps) => {
   const onSubmit = async (values: QuestionSchema) => {
     const payloadData = {
       userInput: values.question,
-      user_id: user?.id as string,
     };
+
     if (id) {
       return sendMessageChatWithId.mutate({
         ...payloadData,

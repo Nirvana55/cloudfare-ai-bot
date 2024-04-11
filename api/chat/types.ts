@@ -1,6 +1,5 @@
 interface SendMessagePayload {
   userInput: string;
-  user_id: string;
   isInitialChat: boolean;
 }
 

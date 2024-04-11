@@ -9,7 +9,6 @@ const sendNewMessageChat = async (
 ) => {
   const response = await axios.post("/api/chat", {
     question: payload.userInput,
-    user_id: payload.user_id,
     isInitialChat: payload.isInitialChat,
   });
 
@@ -21,7 +20,6 @@ const sendMessageChatWithId = async (
 ) => {
   const response = await axios.post("/api/chat", {
     question: payload.userInput,
-    user_id: payload.user_id,
     isInitialChat: payload.isInitialChat,
     message_chat_id: payload.message_chat_id,
   });
