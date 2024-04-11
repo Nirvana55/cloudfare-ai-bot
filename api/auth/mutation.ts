@@ -40,6 +40,7 @@ export const useUserLogin = (handleSuccess: () => void) => {
       toast({
         title: "ERROR",
         description: `${error.message}`,
+        variant: "destructive",
       }),
   });
 };
