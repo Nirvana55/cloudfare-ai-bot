@@ -1,6 +1,7 @@
 interface SendMessagePayload {
   userInput: string;
-  isInitialChat: boolean;
+  response: string;
+  user_id: string;
 }
 
 interface SendMessageChatWithId extends SendMessagePayload {

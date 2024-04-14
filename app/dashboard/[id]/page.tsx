@@ -5,6 +5,14 @@ import ChatInput from "@/components/chatInput/ChatInput";
 import NavbarMenu from "@/components/navbar/NavbarMenu";
 import Sidebar from "@/components/sidebar/Sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  isRedirectingNewChat,
+  responseAtom,
+  responseStreaming,
+  streamLoading,
+  userQuestion,
+} from "@/utils/chat/store";
+import { useAtom } from "jotai";
 import { Bot } from "lucide-react";
 import { useEffect, useRef } from "react";
 
@@ -12,12 +20,28 @@ const ChatItem = ({ params }: { params: { id: string } }) => {
   const { id } = params;
   const scrollableDivRef = useRef<HTMLDivElement>(null);
   const { data: chatItemData } = useGetChat(Number(id));
+  const [chatResponse, setChatResponse] = useAtom(responseAtom);
+  const [isChatResponseStreaming] = useAtom(responseStreaming);
+  const [chatQuestion] = useAtom(userQuestion);
+  const [_userPrompt, setUserPrompt] = useAtom(userQuestion);
+  const [_isResponseStreaming, setIsResponseStreaming] =
+    useAtom(responseStreaming);
+  const [isNewChatRedirection, setIsNewChatRedirection] =
+    useAtom(isRedirectingNewChat);
+
+  const [isStreamResponseLoading] = useAtom(streamLoading);
 
   useEffect(() => {
     if (scrollableDivRef.current) {
       const scrollableDiv = scrollableDivRef.current;
       scrollableDiv.scrollTop = scrollableDiv.scrollHeight;
     }
+    if (isNewChatRedirection) {
+      setIsResponseStreaming(false);
+      setChatResponse("");
+      setUserPrompt("");
+    }
+    setIsNewChatRedirection(false);
   }, []);
 
   return (
@@ -39,7 +63,7 @@ const ChatItem = ({ params }: { params: { id: string } }) => {
                       <Avatar className='h-8 w-8 mr-2 cursor-pointer'>
                         <AvatarImage
                           src='https://github.com/shadcn.png'
-                          alt='@shadcn'
+                          alt='@profile'
                         />
                         <AvatarFallback>CN</AvatarFallback>
                       </Avatar>
@@ -59,6 +83,42 @@ const ChatItem = ({ params }: { params: { id: string } }) => {
                     </div>
                   </div>
                 ))}
+              </div>
+            )}
+            {isChatResponseStreaming && (
+              <div className='mb-8 group-last:mb-0'>
+                {chatQuestion && (
+                  <div className='flex items-center'>
+                    <Avatar className='h-8 w-8 mr-2 cursor-pointer'>
+                      <AvatarImage
+                        src='https://github.com/shadcn.png'
+                        alt='@shadcn'
+                      />
+                      <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                    <strong>You:</strong>
+                    <p className='ml-2 text-[16px] tracking-normal'>
+                      {chatQuestion}
+                    </p>
+                  </div>
+                )}
+                <div className='mt-3'>
+                  <div className='flex items-center'>
+                    <Bot className='mr-2' />
+                    <strong>NIRVANA</strong>
+                  </div>
+                  {isStreamResponseLoading ? (
+                    <p className='ml-8 text-[15px] tracking-normal'>
+                      Generating...
+                    </p>
+                  ) : (
+                    chatResponse && (
+                      <p className='ml-8 text-[15px] tracking-normal'>
+                        {chatResponse}
+                      </p>
+                    )
+                  )}
+                </div>
               </div>
             )}
           </main>

@@ -55,11 +55,11 @@ const Sidebar = (props: SideBarProps) => {
                     className={`flex gap-2 items-center cursor-pointer px-2 py-2 group ${
                       item.chat_id === Number(id)
                         ? "bg-black dark:bg-zinc-800 rounded-md text-white isSelected"
-                        : "hover:bg-black dark:hover:bg-zinc-800 hover:text-white rounded-md"
+                        : "hover:bg-black dark:hover:bg-zinc-800 hover:text-white isNotSelected rounded-md"
                     }`}
                   >
                     <MessageSquare size={16} />
-                    <div className='flex-1 md:w-[140px] lg:w-[180px]'>
+                    <div className='flex-1 md:w-[140px] lg:w-[180px] group-[.isNotSelected]:w-[205px]'>
                       <p className='line-clamp-1 text-[14px] capitalize'>
                         {item.messages[0].prompt}
                       </p>
@@ -68,7 +68,7 @@ const Sidebar = (props: SideBarProps) => {
                       <DropdownMenuTrigger asChild>
                         <EllipsisVertical
                           size={16}
-                          className='justify-end cursor-pointer hidden group-[.isSelected]:block group-hover:block'
+                          className='justify-end cursor-pointer hidden group-[.isSelected]:block'
                         />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className='w-[20px]' align='center'>

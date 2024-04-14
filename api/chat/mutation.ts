@@ -1,29 +1,35 @@
 import { useToast } from "@/components/ui/use-toast";
 import { supabaseClient } from "@/utils/supabase/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 
 const sendNewMessageChat = async (
   payload: SendMessagePayload,
 ) => {
-  const response = await axios.post("/api/chat", {
-    question: payload.userInput,
-    isInitialChat: payload.isInitialChat,
-  });
+  const { data: chat_id, error } = await supabaseClient.rpc(
+    "create_chat_and_chat_message",
+    {
+      _user_id: payload.user_id,
+      _prompt: payload.userInput,
+      _reply: payload.response,
+    },
+  );
 
-  return response;
+  if (error) throw error;
+  return chat_id;
 };
 
 const sendMessageChatWithId = async (
   payload: SendMessageChatWithId,
 ) => {
-  const response = await axios.post("/api/chat", {
-    question: payload.userInput,
-    isInitialChat: payload.isInitialChat,
-    message_chat_id: payload.message_chat_id,
+  const { error } = await supabaseClient.from("messages").insert({
+    prompt: payload.userInput,
+    chat_id: payload.message_chat_id as number,
+    reply: payload.response,
+    user_id: payload.user_id.toString(),
   });
-  return response;
+
+  if (error) throw error;
 };
 
 const deleteChatHistory = async (chat_id: number) => {
@@ -60,14 +66,16 @@ export const useSendMessageChatWithId = (
 
 export const useSendNewMessageChat = (handleSuccess: () => void) => {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   return useMutation({
     mutationFn: sendNewMessageChat,
-    onSuccess: () => {
-      handleSuccess();
+    onSuccess: (chat_id) => {
+      router.push(`/dashboard/${chat_id}`);
       queryClient.invalidateQueries({
         queryKey: ["getAllChats"],
       });
+      handleSuccess();
     },
     onError: (error) => {
       console.log(error);
