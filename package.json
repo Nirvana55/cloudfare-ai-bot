@@ -20,7 +20,9 @@
     "axios": "^1.6.8",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "express": "^4.19.2",
     "geist": "^1.2.1",
+    "jotai": "^2.8.0",
     "lucide-react": "^0.365.0",
     "next": "latest",
     "next-themes": "^0.3.0",
@@ -35,6 +37,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/express": "^4.17.21",
     "@types/node": "20.11.5",
     "@types/react": "18.2.48",
     "@types/react-dom": "18.2.18",
