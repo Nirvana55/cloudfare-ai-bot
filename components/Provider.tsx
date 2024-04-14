@@ -12,7 +12,7 @@ const Provider: FC<PropsWithChildren> = ({ children }) => {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider
         attribute='class'
-        defaultTheme='system'
+        defaultTheme='dark'
         enableSystem
         disableTransitionOnChange
       >

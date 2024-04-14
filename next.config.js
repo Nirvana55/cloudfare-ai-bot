@@ -9,19 +9,6 @@ const nextConfig = {
       },
     ];
   },
-  async headers() {
-    return [
-      {
-        source: "/api/cloudfare",
-        headers: [
-          {
-            key: "Content-Type",
-            value: "text/event-stream",
-          },
-        ],
-      },
-    ];
-  },
 };
 
 module.exports = nextConfig;

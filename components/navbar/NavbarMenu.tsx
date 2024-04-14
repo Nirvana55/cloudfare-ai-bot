@@ -14,14 +14,20 @@ import { useRouter } from "next/navigation";
 import { useUserLogOut } from "@/api/auth/mutation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-const NavbarMenu = () => {
+type NavProps = {
+  id?: string;
+};
+
+const NavbarMenu = (props: NavProps) => {
+  const { id } = props;
+
   const router = useRouter();
   const logOut = useUserLogOut(() => router.push("/auth/login"));
   const handleLogOut = () => logOut.mutate();
 
   return (
     <header className='flex md:fixed md:top-0 md:w-[calc(100%-220px)] lg:w-[calc(100%-280px)] md:right-0 h-14 items-center justify-between md:justify-end gap-4  px-4 lg:h-[60px] lg:px-6'>
-      <MobileMenu />
+      <MobileMenu id={id} />
       <div className='justify-end flex items-center'>
         <ThemeToggle />
         <DropdownMenu>

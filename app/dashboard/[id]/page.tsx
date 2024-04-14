@@ -18,7 +18,6 @@ import { useEffect, useRef } from "react";
 
 const ChatItem = ({ params }: { params: { id: string } }) => {
   const { id } = params;
-  const scrollableDivRef = useRef<HTMLDivElement>(null);
   const { data: chatItemData } = useGetChat(Number(id));
   const [chatResponse, setChatResponse] = useAtom(responseAtom);
   const [isChatResponseStreaming] = useAtom(responseStreaming);
@@ -31,11 +30,19 @@ const ChatItem = ({ params }: { params: { id: string } }) => {
 
   const [isStreamResponseLoading] = useAtom(streamLoading);
 
-  useEffect(() => {
-    if (scrollableDivRef.current) {
-      const scrollableDiv = scrollableDivRef.current;
-      scrollableDiv.scrollTop = scrollableDiv.scrollHeight;
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const streamMessagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    const scrollContainer = messagesEndRef.current;
+    if (scrollContainer) {
+      scrollContainer.scrollIntoView({
+        behavior: `${isChatResponseStreaming ? "smooth" : "instant"}`,
+      });
     }
+  };
+
+  useEffect(() => {
     if (isNewChatRedirection) {
       setIsResponseStreaming(false);
       setChatResponse("");
@@ -44,21 +51,32 @@ const ChatItem = ({ params }: { params: { id: string } }) => {
     setIsNewChatRedirection(false);
   }, []);
 
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatItemData]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [isChatResponseStreaming, chatResponse]);
+
   return (
     <div className='grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]'>
       <Sidebar id={id} />
-      <NavbarMenu />
+      <NavbarMenu id={id} />
 
       <div>
-        <div
-          ref={scrollableDivRef}
-          className='h-[80vh] md:h-[83vh] lg:h-[85vh] overflow-y-auto md:mt-16'
-        >
+        <div className='h-[80vh] md:h-[83vh] lg:h-[85vh] overflow-y-auto md:mt-16'>
           <main className='flex flex-1 flex-col lg:py-6 lg:px-14 lg:mx-auto lg:max-w-screen-lg'>
             {chatItemData && chatItemData.length > 0 && (
               <div className='flex flex-col rounded-lg p-4'>
-                {chatItemData.map((item) => (
-                  <div key={item.message_id} className='mb-8 group-last:mb-0'>
+                {chatItemData.map((item, index) => (
+                  <div
+                    key={item.message_id}
+                    ref={
+                      index === chatItemData.length - 1 ? messagesEndRef : null
+                    }
+                    className='mb-8 group-last:mb-0'
+                  >
                     <div className='flex items-center'>
                       <Avatar className='h-8 w-8 mr-2 cursor-pointer'>
                         <AvatarImage
@@ -86,7 +104,7 @@ const ChatItem = ({ params }: { params: { id: string } }) => {
               </div>
             )}
             {isChatResponseStreaming && (
-              <div className='mb-8 group-last:mb-0'>
+              <div className='mb-8 group-last:mb-0' ref={streamMessagesEndRef}>
                 {chatQuestion && (
                   <div className='flex items-center'>
                     <Avatar className='h-8 w-8 mr-2 cursor-pointer'>
@@ -123,6 +141,7 @@ const ChatItem = ({ params }: { params: { id: string } }) => {
             )}
           </main>
         </div>
+        {/* <div ref={messagesEndRef} /> */}
 
         <div className='mb-1 sm:mb-0 lg:px-14 lg:mx-auto lg:max-w-screen-lg'>
           <ChatInput id={id} />
