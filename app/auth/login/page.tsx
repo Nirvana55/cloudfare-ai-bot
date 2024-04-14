@@ -22,6 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useUserLogin } from "@/api/auth/mutation";
 import { useRouter } from "next/navigation";
+import { Bot } from "lucide-react";
 
 const schema = z.object({
   email: z.string().min(1, "Email is required").email("Email is invalid"),
@@ -51,8 +52,9 @@ const Login = () => {
 
   return (
     <Card className='mx-auto max-w-sm mt-56'>
-      <CardHeader>
-        <CardTitle className='text-2xl'>Login</CardTitle>
+      <CardHeader className='text-center'>
+        <Bot size={40} className='mx-auto' />
+        <CardTitle className='text-2xl'>Welcome to Nirvana GPT</CardTitle>
         <CardDescription>
           Enter your email below to login to your account
         </CardDescription>
