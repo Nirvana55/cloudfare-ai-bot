@@ -25,6 +25,14 @@ import {
   streamLoading,
   userQuestion,
 } from "@/utils/chat/store";
+import { Textarea } from "@/components/ui/textarea";
+import { Send } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const schema = z.object({
   question: z.string(),
@@ -41,7 +49,7 @@ const ChatInput = (props: ChatInputProps) => {
   const user = useGetUserData();
   const [_chatResponse, setChatResponse] = useAtom(responseAtom);
   const [_userPrompt, setUserPrompt] = useAtom(userQuestion);
-  const [_isResponseStreaming, setIsResponseStreaming] =
+  const [isResponseStreaming, setIsResponseStreaming] =
     useAtom(responseStreaming);
   const [_isStreamResponseLoading, setIsStreamResponseLoading] =
     useAtom(streamLoading);
@@ -159,12 +167,9 @@ const ChatInput = (props: ChatInputProps) => {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input
-                      id='text'
-                      autoComplete='off'
-                      type='text'
+                    <Textarea
                       placeholder='Message NIRVANA GPT'
-                      required
+                      className='resize-none min-h-10 h-10'
                       {...field}
                     />
                   </FormControl>
@@ -173,10 +178,27 @@ const ChatInput = (props: ChatInputProps) => {
               )}
             />
           </div>
-
-          <Button type='submit' className='w-full lg:col-span-1'>
-            Submit
-          </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className='cursor-pointer' tabIndex={0}>
+                  <Button
+                    disabled={
+                      form.getValues("question").length === 0 ||
+                      isResponseStreaming
+                    }
+                    type='submit'
+                    className='w-full lg:col-span-1 '
+                  >
+                    <Send className=' dark:text-primary-foreground' />
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Send Message</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </form>
       </Form>
     </div>
