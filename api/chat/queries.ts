@@ -20,7 +20,7 @@ const getChat = async (chat_id: number) => {
   ).eq(
     "chat_id",
     chat_id,
-  );
+  ).order("created_at", { ascending: true });
 
   if (error) {
     throw error;
