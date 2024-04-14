@@ -47,7 +47,7 @@ const ChatItem = ({ params }: { params: { id: string } }) => {
   return (
     <div className='grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]'>
       <Sidebar id={id} />
-      <NavbarMenu />
+      <NavbarMenu id={id} />
 
       <div>
         <div

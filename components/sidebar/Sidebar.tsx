@@ -80,22 +80,18 @@ const Sidebar = (props: SideBarProps) => {
                         </DialogTrigger>
                       </DropdownMenuContent>
                     </DropdownMenu>
-                    <DialogContent className='sm:max-w-[425px]'>
+                    <DialogContent>
                       <DialogHeader>
                         <DialogTitle>Delete chat?</DialogTitle>
                       </DialogHeader>
-                      <div className='grid gap-4 py-4'>
-                        <p>
-                          This will delete{" "}
-                          <span className='font-semibold'>
-                            {item.messages[0].prompt}.
-                          </span>
-                        </p>
-                      </div>
+                      <p className='line-clamp-5'>
+                        {item.messages[0].prompt} will be deleted.
+                      </p>
                       <DialogFooter>
                         <Button
                           className='bg-red-600 text-white font-semibold hover:bg-red-700'
                           onClick={handleChatHistory}
+                          disabled={deleteChatHistory.isPending}
                           type='submit'
                         >
                           Delete
