@@ -60,7 +60,7 @@ const Sidebar = (props: SideBarProps) => {
                   >
                     <MessageSquare size={16} />
                     <div className='flex-1 md:w-[140px] lg:w-[180px] group-[.isNotSelected]:w-[205px]'>
-                      <p className='line-clamp-1 text-[14px] capitalize'>
+                      <p className='truncate text-[14px] capitalize'>
                         {item.messages[0].prompt}
                       </p>
                     </div>

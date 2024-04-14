@@ -92,6 +92,7 @@ const ChatInput = (props: ChatInputProps) => {
     const reader = response.body.getReader();
     const decoder = new TextDecoder("utf-8");
     let fullResponse = "";
+    let partialData = "";
 
     try {
       while (true) {
@@ -100,8 +101,12 @@ const ChatInput = (props: ChatInputProps) => {
           break;
         }
 
-        const decoderChunk = decoder.decode(value);
-        const lines = decoderChunk.split("\n");
+        const decoderChunk = decoder.decode(value, { stream: true });
+        partialData += decoderChunk;
+
+        const lines = partialData.split("\n").map((line) => line.trim());
+        partialData = lines.pop() as string;
+
         const parseLines = lines
           .map((line) =>
             line
