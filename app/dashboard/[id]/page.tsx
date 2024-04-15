@@ -16,10 +16,13 @@ import {
 import { useAtom } from "jotai";
 import { Bot } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { Loader2 } from "lucide-react";
 
 const ChatItem = ({ params }: { params: { id: string } }) => {
   const { id } = params;
-  const { data: chatItemData } = useGetChat(Number(id));
+  const { data: chatItemData, isLoading: isChatItemDataLoading } = useGetChat(
+    Number(id)
+  );
   const [chatResponse, setChatResponse] = useAtom(responseAtom);
   const [isChatResponseStreaming] = useAtom(responseStreaming);
   const [chatQuestion] = useAtom(userQuestion);
@@ -68,43 +71,53 @@ const ChatItem = ({ params }: { params: { id: string } }) => {
       <div>
         <div className='h-[80vh] md:h-[83vh] lg:h-[85vh] overflow-y-auto md:mt-16'>
           <main className='flex flex-1 flex-col lg:py-6 lg:px-14 lg:mx-auto lg:max-w-screen-lg'>
-            {chatItemData && chatItemData.length > 0 && (
-              <div className='flex flex-col rounded-lg p-4'>
-                {chatItemData.map((item, index) => (
-                  <div
-                    key={item.message_id}
-                    ref={
-                      index === chatItemData.length - 1 ? messagesEndRef : null
-                    }
-                    className='mb-8 group-last:mb-0'
-                  >
-                    <div className='flex flex-col items-start'>
-                      <div className='flex items-center'>
-                        <Avatar className='h-8 w-8 mr-2 cursor-pointer'>
-                          <AvatarImage
-                            src='https://github.com/shadcn.png'
-                            alt='@profile'
-                          />
-                          <AvatarFallback>CN</AvatarFallback>
-                        </Avatar>
-                        <strong>You:</strong>
-                      </div>
-                      <p className='ml-10 leading-7 break-all text-[16px]'>
-                        {item.prompt}
-                      </p>
-                    </div>
+            {!isChatItemDataLoading ? (
+              <>
+                {chatItemData && chatItemData.length > 0 && (
+                  <div className='flex flex-col rounded-lg p-4'>
+                    {chatItemData.map((item, index) => (
+                      <div
+                        key={item.message_id}
+                        ref={
+                          index === chatItemData.length - 1
+                            ? messagesEndRef
+                            : null
+                        }
+                        className='mb-8 group-last:mb-0'
+                      >
+                        <div className='flex flex-col items-start'>
+                          <div className='flex items-center'>
+                            <Avatar className='h-8 w-8 mr-2 cursor-pointer'>
+                              <AvatarImage
+                                src='https://github.com/shadcn.png'
+                                alt='@profile'
+                              />
+                              <AvatarFallback>CN</AvatarFallback>
+                            </Avatar>
+                            <strong>You:</strong>
+                          </div>
+                          <p className='ml-10 leading-7 break-all text-[16px]'>
+                            {item.prompt}
+                          </p>
+                        </div>
 
-                    <div className='mt-3'>
-                      <div className='flex items-center'>
-                        <Bot className='mr-2 h-8 w-8 ' />
-                        <strong>NIRVANA</strong>
+                        <div className='mt-3'>
+                          <div className='flex items-center'>
+                            <Bot className='mr-2 h-8 w-8 ' />
+                            <strong>NIRVANA</strong>
+                          </div>
+                          <p className='ml-10 text-[16px] leading-7 tracking-normal'>
+                            {item.reply}
+                          </p>
+                        </div>
                       </div>
-                      <p className='ml-10 text-[16px] leading-7 tracking-normal'>
-                        {item.reply}
-                      </p>
-                    </div>
+                    ))}
                   </div>
-                ))}
+                )}
+              </>
+            ) : (
+              <div className='justify-center h-20 flex mt-64'>
+                <Loader2 className='h-4 w-4 animate-spin' />
               </div>
             )}
 
@@ -122,7 +135,7 @@ const ChatItem = ({ params }: { params: { id: string } }) => {
                       </Avatar>
                       <strong>You:</strong>
                     </div>
-                    <p className='ml-10 text-[16px] leading-7 break-all tracking-normal'>
+                    <p className='ml-11 text-[16px] leading-7 break-all tracking-normal'>
                       {chatQuestion}
                     </p>
                   </div>
@@ -136,7 +149,7 @@ const ChatItem = ({ params }: { params: { id: string } }) => {
                     <SkeletonGeneratingText />
                   ) : (
                     chatResponse && (
-                      <p className='ml-10 text-[16px] leading-7 tracking-normal'>
+                      <p className='ml-11 text-[16px] leading-7 tracking-normal'>
                         {chatResponse}
                       </p>
                     )
