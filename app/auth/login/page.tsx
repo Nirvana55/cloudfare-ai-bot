@@ -51,7 +51,7 @@ const Login = () => {
   };
 
   return (
-    <Card className='mx-auto max-w-sm mt-56'>
+    <Card className='mx-auto max-w-sm mt-40 md:mt-56'>
       <CardHeader className='text-center'>
         <Bot size={40} className='mx-auto' />
         <CardTitle className='text-2xl'>Welcome to Nirvana GPT</CardTitle>
