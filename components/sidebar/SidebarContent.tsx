@@ -87,7 +87,7 @@ const SidebarContent = (props: SideBarContentProps) => {
                     <DialogHeader>
                       <DialogTitle>Delete chat?</DialogTitle>
                     </DialogHeader>
-                    <p className='line-clamp-5'>
+                    <p className='break-all'>
                       {item.messages[0].prompt} will be deleted.
                     </p>
                     <DialogFooter>

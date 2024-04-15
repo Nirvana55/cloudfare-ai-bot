@@ -89,7 +89,7 @@ const ChatItem = ({ params }: { params: { id: string } }) => {
                         </Avatar>
                         <strong>You:</strong>
                       </div>
-                      <p className='ml-10 text-[16px] leading-7 tracking-normal'>
+                      <p className='ml-10 leading-7 break-all text-[16px]'>
                         {item.prompt}
                       </p>
                     </div>
@@ -122,7 +122,7 @@ const ChatItem = ({ params }: { params: { id: string } }) => {
                       </Avatar>
                       <strong>You:</strong>
                     </div>
-                    <p className='ml-10 text-[16px] leading-7 tracking-normal'>
+                    <p className='ml-10 text-[16px] leading-7 break-all tracking-normal'>
                       {chatQuestion}
                     </p>
                   </div>
