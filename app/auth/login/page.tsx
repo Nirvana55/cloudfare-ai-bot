@@ -100,7 +100,7 @@ const Login = () => {
                 </FormItem>
               )}
             />
-            <Button type='submit' className='w-full'>
+            <Button disabled={login.isPending} type='submit' className='w-full'>
               Login
             </Button>
             <div className='mt-4 text-center text-sm'>
