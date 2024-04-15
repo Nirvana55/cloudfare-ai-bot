@@ -4,6 +4,7 @@ import { useGetChat } from "@/api/chat/queries";
 import ChatInput from "@/components/chatInput/ChatInput";
 import NavbarMenu from "@/components/navbar/NavbarMenu";
 import Sidebar from "@/components/sidebar/Sidebar";
+import SkeletonGeneratingText from "@/components/skeleton/GeneratingTextSkeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   isRedirectingNewChat,
@@ -77,25 +78,28 @@ const ChatItem = ({ params }: { params: { id: string } }) => {
                     }
                     className='mb-8 group-last:mb-0'
                   >
-                    <div className='flex items-center'>
-                      <Avatar className='h-8 w-8 mr-2 cursor-pointer'>
-                        <AvatarImage
-                          src='https://github.com/shadcn.png'
-                          alt='@profile'
-                        />
-                        <AvatarFallback>CN</AvatarFallback>
-                      </Avatar>
-                      <strong>You:</strong>
-                      <p className='ml-2 text-[16px] tracking-normal'>
+                    <div className='flex flex-col items-start'>
+                      <div className='flex items-center'>
+                        <Avatar className='h-8 w-8 mr-2 cursor-pointer'>
+                          <AvatarImage
+                            src='https://github.com/shadcn.png'
+                            alt='@profile'
+                          />
+                          <AvatarFallback>CN</AvatarFallback>
+                        </Avatar>
+                        <strong>You:</strong>
+                      </div>
+                      <p className='ml-10 text-[16px] leading-7 tracking-normal'>
                         {item.prompt}
                       </p>
                     </div>
+
                     <div className='mt-3'>
                       <div className='flex items-center'>
-                        <Bot className='mr-2' />
+                        <Bot className='mr-2 h-8 w-8 ' />
                         <strong>NIRVANA</strong>
                       </div>
-                      <p className='ml-8 text-[15px] tracking-normal'>
+                      <p className='ml-10 text-[16px] leading-7 tracking-normal'>
                         {item.reply}
                       </p>
                     </div>
@@ -103,19 +107,22 @@ const ChatItem = ({ params }: { params: { id: string } }) => {
                 ))}
               </div>
             )}
+
             {isChatResponseStreaming && (
               <div className='mb-8 group-last:mb-0' ref={streamMessagesEndRef}>
                 {chatQuestion && (
-                  <div className='flex items-center'>
-                    <Avatar className='h-8 w-8 mr-2 cursor-pointer'>
-                      <AvatarImage
-                        src='https://github.com/shadcn.png'
-                        alt='@shadcn'
-                      />
-                      <AvatarFallback>CN</AvatarFallback>
-                    </Avatar>
-                    <strong>You:</strong>
-                    <p className='ml-2 text-[16px] tracking-normal'>
+                  <div className='flex flex-col items-start'>
+                    <div className='flex items-center'>
+                      <Avatar className='h-8 w-8 mr-2 cursor-pointer'>
+                        <AvatarImage
+                          src='https://github.com/shadcn.png'
+                          alt='@shadcn'
+                        />
+                        <AvatarFallback>CN</AvatarFallback>
+                      </Avatar>
+                      <strong>You:</strong>
+                    </div>
+                    <p className='ml-10 text-[16px] leading-7 tracking-normal'>
                       {chatQuestion}
                     </p>
                   </div>
@@ -126,12 +133,10 @@ const ChatItem = ({ params }: { params: { id: string } }) => {
                     <strong>NIRVANA</strong>
                   </div>
                   {isStreamResponseLoading ? (
-                    <p className='ml-8 text-[15px] tracking-normal'>
-                      Generating...
-                    </p>
+                    <SkeletonGeneratingText />
                   ) : (
                     chatResponse && (
-                      <p className='ml-8 text-[15px] tracking-normal'>
+                      <p className='ml-10 text-[16px] leading-7 tracking-normal'>
                         {chatResponse}
                       </p>
                     )
