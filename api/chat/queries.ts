@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const getAllChats = async () => {
   const { data, error } = await supabaseClient.from("chats").select(
-    "*,messages(*)",
+    "chat_id,messages(prompt)",
   ).order("created_at", {
     ascending: false,
   });
@@ -16,7 +16,7 @@ const getAllChats = async () => {
 
 const getChat = async (chat_id: number) => {
   const { data, error } = await supabaseClient.from("messages").select(
-    "*",
+    "message_id,prompt,reply",
   ).eq(
     "chat_id",
     chat_id,

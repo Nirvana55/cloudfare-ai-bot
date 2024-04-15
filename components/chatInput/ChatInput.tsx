@@ -187,16 +187,16 @@ const ChatInput = (props: ChatInputProps) => {
           </div>
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger className='cursor-pointer'>
+              <TooltipTrigger className='cursor-pointer' asChild>
                 <Button
                   disabled={
                     form.getValues("question").length === 0 ||
                     isResponseStreaming
                   }
                   type='submit'
-                  className='w-full col-span-1 max-sm:p-2 lg:col-span-1 '
+                  className='w-full col-span-1 max-sm:p-2 max-md::p-2 lg:col-span-1 '
                 >
-                  <Send className='max-sm:h-5 dark:text-primary-foreground' />
+                  <Send className='max-sm:h-5 h-5 dark:text-primary-foreground' />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
