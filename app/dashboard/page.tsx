@@ -52,7 +52,7 @@ const Dashboard = () => {
                           </Avatar>
                           <strong>You:</strong>
                         </div>
-                        <p className='ml-10 text-[16px] justify-start  tracking-normal'>
+                        <p className='ml-10 text-[16px] justify-start break-all tracking-normal'>
                           {chatQuestion}
                         </p>
                       </div>
@@ -67,7 +67,7 @@ const Dashboard = () => {
                         <SkeletonGeneratingText />
                       ) : (
                         chatResponse && (
-                          <p className='ml-8 text-[16px] leading-7 tracking-normal'>
+                          <p className='ml-8 text-[16px] leading-7  tracking-normal'>
                             {chatResponse}
                           </p>
                         )
