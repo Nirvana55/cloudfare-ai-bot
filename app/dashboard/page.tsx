@@ -67,7 +67,7 @@ const Dashboard = () => {
                         <SkeletonGeneratingText />
                       ) : (
                         chatResponse && (
-                          <p className='ml-8 text-[15px] tracking-normal'>
+                          <p className='ml-8 text-[16px] leading-7 tracking-normal'>
                             {chatResponse}
                           </p>
                         )
