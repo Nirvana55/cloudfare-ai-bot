@@ -13,6 +13,7 @@ import { useAtom } from "jotai";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Bot } from "lucide-react";
 import { usePathname } from "next/navigation";
+import SkeletonGeneratingText from "@/components/skeleton/GeneratingTextSkeleton";
 
 const Dashboard = () => {
   const [chatResponse] = useAtom(responseAtom);
@@ -40,16 +41,18 @@ const Dashboard = () => {
                 {isChatResponseStreaming && chatQuestion && (
                   <div className='mb-8 group-last:mb-0'>
                     {chatQuestion && (
-                      <div className='flex items-center'>
-                        <Avatar className='h-8 w-8 mr-2 cursor-pointer'>
-                          <AvatarImage
-                            src='https://github.com/shadcn.png'
-                            alt='@shadcn'
-                          />
-                          <AvatarFallback>CN</AvatarFallback>
-                        </Avatar>
-                        <strong>You:</strong>
-                        <p className='ml-2 text-[16px] tracking-normal'>
+                      <div className='flex flex-col items-start'>
+                        <div className='flex items-center'>
+                          <Avatar className='h-8 w-8 mr-2 cursor-pointer'>
+                            <AvatarImage
+                              src='https://github.com/shadcn.png'
+                              alt='@shadcn'
+                            />
+                            <AvatarFallback>CN</AvatarFallback>
+                          </Avatar>
+                          <strong>You:</strong>
+                        </div>
+                        <p className='ml-10 text-[16px] justify-start  tracking-normal'>
                           {chatQuestion}
                         </p>
                       </div>
@@ -61,9 +64,7 @@ const Dashboard = () => {
                         <strong>NIRVANA</strong>
                       </div>
                       {isStreamResponseLoading ? (
-                        <p className='ml-8 text-[15px] tracking-normal'>
-                          Generating...
-                        </p>
+                        <SkeletonGeneratingText />
                       ) : (
                         chatResponse && (
                           <p className='ml-8 text-[15px] tracking-normal'>
