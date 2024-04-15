@@ -97,9 +97,12 @@ const ChatInput = (props: ChatInputProps) => {
     }
     setIsStreamResponseLoading(false);
 
+    // getting the stream
     const reader = response.body.getReader();
+    // decoding with utf-8
     const decoder = new TextDecoder("utf-8");
     let fullResponse = "";
+    // partial data to get full chunks
     let partialData = "";
 
     try {
@@ -109,12 +112,16 @@ const ChatInput = (props: ChatInputProps) => {
           break;
         }
 
+        // decoding chunk
         const decoderChunk = decoder.decode(value, { stream: true });
+        // partial data for all chunk
         partialData += decoderChunk;
 
+        // split the chunks
         const lines = partialData.split("\n").map((line) => line.trim());
         partialData = lines.pop() as string;
 
+        // remove unused lines and filter
         const parseLines = lines
           .map((line) =>
             line
