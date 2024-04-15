@@ -158,9 +158,9 @@ const ChatInput = (props: ChatInputProps) => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className='grid grid-cols-1 lg:grid-cols-12 gap-2'
+          className='grid justify-center grid-cols-8 md:grid-cols-9 lg:grid-cols-12 gap-2'
         >
-          <div className='lg:col-span-11'>
+          <div className='col-span-7 md:col-span-8 lg:col-span-11'>
             <FormField
               control={form.control}
               name='question'
@@ -180,19 +180,17 @@ const ChatInput = (props: ChatInputProps) => {
           </div>
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger asChild>
-                <span className='cursor-pointer' tabIndex={0}>
-                  <Button
-                    disabled={
-                      form.getValues("question").length === 0 ||
-                      isResponseStreaming
-                    }
-                    type='submit'
-                    className='w-full lg:col-span-1 '
-                  >
-                    <Send className=' dark:text-primary-foreground' />
-                  </Button>
-                </span>
+              <TooltipTrigger className='cursor-pointer'>
+                <Button
+                  disabled={
+                    form.getValues("question").length === 0 ||
+                    isResponseStreaming
+                  }
+                  type='submit'
+                  className='w-full col-span-1 max-sm:p-2 lg:col-span-1 '
+                >
+                  <Send className='max-sm:h-5 dark:text-primary-foreground' />
+                </Button>
               </TooltipTrigger>
               <TooltipContent>
                 <p>Send Message</p>
