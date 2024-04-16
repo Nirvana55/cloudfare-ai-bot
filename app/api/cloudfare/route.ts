@@ -7,7 +7,11 @@ export async function POST(req: Request) {
       {
         method: "POST",
         body: JSON.stringify({
-          messages: [{ role: "user", content: prompt }],
+          messages: [{
+            role: "system",
+            content:
+              "You are a friendly assistant that helps write great Node.js code and your name is NIRVANA.",
+          }, { role: "user", content: prompt }],
           stream: true,
         }),
         headers: {
