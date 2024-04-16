@@ -41,7 +41,7 @@ const ChatItem = ({ params }: { params: { id: string } }) => {
     const scrollContainer = messagesEndRef.current;
     if (scrollContainer) {
       scrollContainer.scrollIntoView({
-        behavior: `${isChatResponseStreaming ? "smooth" : "instant"}`,
+        behavior: "instant",
       });
     }
   };
@@ -60,7 +60,12 @@ const ChatItem = ({ params }: { params: { id: string } }) => {
   }, [chatItemData]);
 
   useEffect(() => {
-    scrollToBottom();
+    const scrollContainer = streamMessagesEndRef.current;
+    if (scrollContainer) {
+      scrollContainer.scrollIntoView({
+        behavior: "instant",
+      });
+    }
   }, [isChatResponseStreaming, chatResponse]);
 
   return (
