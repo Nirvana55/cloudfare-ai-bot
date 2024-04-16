@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
@@ -33,6 +32,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { KeyboardEvent } from "react";
 
 const schema = z.object({
   question: z.string(),
@@ -67,38 +67,22 @@ const ChatInput = (props: ChatInputProps) => {
   });
 
   const sendMessageChatWithId = useSendMessageChatWithId(() => {
-    form.setValue("question", "");
     form.reset({ question: "" });
     setIsResponseStreaming(false);
     setChatResponse("");
     setUserPrompt("");
   }, Number(id));
 
-  const onSubmit = async (values: QuestionSchema) => {
-    setIsResponseStreaming(true);
-    setUserPrompt(values.question);
-    setIsStreamResponseLoading(true);
-
-    const response = await fetch("/api/cloudfare", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ prompt: values.question }),
-    });
-
-    if (!response.body) {
-      setIsResponseStreaming(false);
-      setIsStreamResponseLoading(false);
-      setChatResponse("");
-      setUserPrompt("");
-
-      return;
-    }
+  const handleStreamEnd = () => {
+    setIsResponseStreaming(false);
     setIsStreamResponseLoading(false);
+    setChatResponse("");
+    setUserPrompt("");
+  };
 
+  const readStream = async (readableStream: ReadableStream<Uint8Array>) => {
     // getting the stream
-    const reader = response.body.getReader();
+    const reader = readableStream.getReader();
     // decoding with utf-8
     const decoder = new TextDecoder("utf-8");
     let fullResponse = "";
@@ -129,7 +113,7 @@ const ChatInput = (props: ChatInputProps) => {
               .replace("</s>", "")
               .trim()
           )
-          .filter((line) => line !== "" && line !== "[DONE]" && line !== "</s>")
+          .filter((line) => line !== "" && line !== "[DONE]")
           .map((line) => JSON.parse(line));
 
         for (const parsedLine of parseLines) {
@@ -140,23 +124,64 @@ const ChatInput = (props: ChatInputProps) => {
           }
         }
       }
-
-      if (id) {
-        return sendMessageChatWithId.mutate({
-          message_chat_id: Number(id),
-          response: fullResponse,
-          user_id: user?.id as string,
-          userInput: values.question,
-        });
-      }
-
-      return sendMessageChat.mutate({
-        response: fullResponse,
-        user_id: user?.id as string,
-        userInput: values.question,
-      });
     } catch (error) {
-      console.error("Error while reading or processing stream: ", error);
+      console.error("Error while reading stream:", error);
+      throw error;
+    }
+    return fullResponse;
+  };
+
+  const sendResponse = async (response: string, userInput: string) => {
+    if (id) {
+      return sendMessageChatWithId.mutate({
+        message_chat_id: Number(id),
+        response,
+        user_id: user?.id as string,
+        userInput,
+      });
+    }
+
+    return sendMessageChat.mutate({
+      response,
+      user_id: user?.id as string,
+      userInput,
+    });
+  };
+
+  const onSubmit = async (values: QuestionSchema) => {
+    const { question } = values;
+
+    setIsResponseStreaming(true);
+    setUserPrompt(values.question);
+    setIsStreamResponseLoading(true);
+    form.reset({ question: "" });
+
+    try {
+      const response = await fetch("/api/cloudfare", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt: question }),
+      });
+
+      if (!response.body) {
+        handleStreamEnd();
+        return;
+      }
+      setIsStreamResponseLoading(false);
+      const fullResponse = await readStream(response.body);
+      await sendResponse(fullResponse, question);
+    } catch (error) {
+      console.error("Fetch or streaming error:", error);
+      handleStreamEnd();
+    }
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      form.handleSubmit(onSubmit)();
     }
   };
 
@@ -175,6 +200,7 @@ const ChatInput = (props: ChatInputProps) => {
                 <FormItem>
                   <FormControl>
                     <Textarea
+                      onKeyDown={handleKeyDown}
                       placeholder='Message NIRVANA GPT'
                       className='resize-none min-h-10 h-10'
                       {...field}
