@@ -35,7 +35,7 @@ import {
 import { KeyboardEvent } from "react";
 
 const schema = z.object({
-  question: z.string(),
+  question: z.string().min(1, "Please provide text"),
 });
 
 type QuestionSchema = z.infer<typeof schema>;
@@ -203,6 +203,7 @@ const ChatInput = (props: ChatInputProps) => {
                       onKeyDown={handleKeyDown}
                       placeholder='Message NIRVANA GPT'
                       className='resize-none min-h-10 h-10'
+                      required
                       {...field}
                     />
                   </FormControl>
