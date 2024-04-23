@@ -7,6 +7,7 @@ import Sidebar from "@/components/sidebar/Sidebar";
 import SkeletonGeneratingText from "@/components/skeleton/GeneratingTextSkeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
+  chatHistoryPrompt,
   isRedirectingNewChat,
   responseAtom,
   responseStreaming,
@@ -23,6 +24,7 @@ const ChatItem = ({ params }: { params: { id: string } }) => {
   const { data: chatItemData, isLoading: isChatItemDataLoading } = useGetChat(
     Number(id)
   );
+
   const [chatResponse, setChatResponse] = useAtom(responseAtom);
   const [isChatResponseStreaming] = useAtom(responseStreaming);
   const [chatQuestion] = useAtom(userQuestion);
@@ -33,6 +35,7 @@ const ChatItem = ({ params }: { params: { id: string } }) => {
     useAtom(isRedirectingNewChat);
 
   const [isStreamResponseLoading] = useAtom(streamLoading);
+  const [_chatHistoryPrompt, setChatHistoryPrompt] = useAtom(chatHistoryPrompt);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const streamMessagesEndRef = useRef<HTMLDivElement>(null);
@@ -56,6 +59,10 @@ const ChatItem = ({ params }: { params: { id: string } }) => {
   }, []);
 
   useEffect(() => {
+    if (chatItemData?.formattedData) {
+      setChatHistoryPrompt(chatItemData?.formattedData);
+    }
+
     scrollToBottom();
   }, [chatItemData]);
 
@@ -78,13 +85,13 @@ const ChatItem = ({ params }: { params: { id: string } }) => {
           <main className='flex flex-1 flex-col lg:py-6 lg:px-14 lg:mx-auto lg:max-w-screen-lg'>
             {!isChatItemDataLoading ? (
               <>
-                {chatItemData && chatItemData.length > 0 && (
+                {chatItemData?.data && chatItemData.data.length > 0 && (
                   <div className='flex flex-col rounded-lg p-4'>
-                    {chatItemData.map((item, index) => (
+                    {chatItemData.data.map((item, index) => (
                       <div
                         key={item.message_id}
                         ref={
-                          index === chatItemData.length - 1
+                          index === chatItemData.data.length - 1
                             ? messagesEndRef
                             : null
                         }
@@ -127,7 +134,10 @@ const ChatItem = ({ params }: { params: { id: string } }) => {
             )}
 
             {isChatResponseStreaming && (
-              <div className='mb-8 group-last:mb-0' ref={streamMessagesEndRef}>
+              <div
+                className='mb-8 group-last:mb-0 px-4'
+                ref={streamMessagesEndRef}
+              >
                 {chatQuestion && (
                   <div className='flex flex-col items-start'>
                     <div className='flex items-center'>
