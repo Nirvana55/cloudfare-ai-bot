@@ -25,7 +25,13 @@ const getChat = async (chat_id: number) => {
   if (error) {
     throw error;
   }
-  return data;
+  const formattedData = data.map((item) => {
+    return [{
+      role: "user",
+      content: item.prompt,
+    }, { role: "assistant", "content": item.reply }];
+  }).flat();
+  return { data, formattedData };
 };
 
 export const useGetAllChat = () => {

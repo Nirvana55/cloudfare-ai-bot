@@ -18,6 +18,7 @@ import {
 import useGetUserData from "@/lib/hooks";
 import { useAtom } from "jotai";
 import {
+  chatHistoryPrompt,
   isRedirectingNewChat,
   responseAtom,
   responseStreaming,
@@ -55,6 +56,8 @@ const ChatInput = (props: ChatInputProps) => {
     useAtom(streamLoading);
   const [_isNewChatRedirection, setIsNewChatRedirection] =
     useAtom(isRedirectingNewChat);
+  const [chatHistoryPromptData] = useAtom(chatHistoryPrompt);
+
   const form = useForm<QuestionSchema>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -98,6 +101,7 @@ const ChatInput = (props: ChatInputProps) => {
 
         // decoding chunk
         const decoderChunk = decoder.decode(value, { stream: true });
+
         // partial data for all chunk
         partialData += decoderChunk;
 
@@ -110,7 +114,7 @@ const ChatInput = (props: ChatInputProps) => {
           .map((line) =>
             line
               .replace(/^data: /, "")
-              .replace("</s>", "")
+              .replace(/<\/s>/g, "")
               .trim()
           )
           .filter((line) => line !== "" && line !== "[DONE]")
@@ -128,7 +132,7 @@ const ChatInput = (props: ChatInputProps) => {
       console.error("Error while reading stream:", error);
       throw error;
     }
-    return fullResponse;
+    return fullResponse.trim().replace(/<\/s>/g, "");
   };
 
   const sendResponse = async (response: string, userInput: string) => {
@@ -157,12 +161,23 @@ const ChatInput = (props: ChatInputProps) => {
     form.reset({ question: "" });
 
     try {
+      const requestData = {
+        messages: [
+          {
+            role: "system",
+            content:
+              "You professional Node.js assistant. Your name is NIRVANA. You know nothing about Lawpath.",
+          },
+          ...chatHistoryPromptData,
+          { role: "user", content: question },
+        ],
+      };
       const response = await fetch("/api/cloudfare", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ prompt: question }),
+        body: JSON.stringify(requestData),
       });
 
       if (!response.body) {
